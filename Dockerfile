@@ -18,14 +18,15 @@ RUN apt-get update -y && apt-get upgrade -y && apt-get install --no-install-reco
   build-essential \
   ffmpeg
 
-COPY ./model/ ${MODEL_DIR}/${MODEL}
-
 # We need the latest pip
 RUN pip install --upgrade --no-cache-dir pip
 
 # Install dependencies
 COPY requirements.txt .
-RUN pip install -r requirements.txt 
+RUN pip install -r requirements.txt
+
+# Download model at build time (model/ is gitignored, so COPY won't work in CI)
+RUN python -c "from huggingface_hub import snapshot_download; snapshot_download('${MODEL}', local_dir='${MODEL_DIR}/${MODEL}')"
 
 COPY web.py .
 COPY model.py .
