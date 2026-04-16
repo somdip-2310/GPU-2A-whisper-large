@@ -10,13 +10,16 @@ ENV MODEL=${MODEL}
 ENV TZ=Etc/UTC
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update -y && apt-get upgrade -y && apt-get install --no-install-recommends --no-install-suggests -y \
-  git \
-  wget \
-  libgl1 \
-  libglib2.0-0 \
-  build-essential \
-  ffmpeg
+RUN echo 'Acquire::Retries "5"; Acquire::http::Timeout "30"; Acquire::https::Timeout "30";' > /etc/apt/apt.conf.d/99retries \
+  && apt-get update -y \
+  && apt-get install --no-install-recommends --no-install-suggests -y \
+     git \
+     wget \
+     libgl1 \
+     libglib2.0-0 \
+     build-essential \
+     ffmpeg \
+  && rm -rf /var/lib/apt/lists/*
 
 # We need the latest pip
 RUN pip install --upgrade --no-cache-dir pip
