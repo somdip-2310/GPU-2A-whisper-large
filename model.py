@@ -8,6 +8,13 @@ model = os.environ.get("MODEL")
 model_dir = os.environ.get("MODEL_DIR")
 model_path = os.path.join(model_dir, model)
 
+# If model wasn't pre-downloaded at build time, download from HuggingFace on first run
+if not os.path.isdir(model_path):
+    print(f"⏬ Model not found at {model_path}, downloading from HuggingFace...")
+    from huggingface_hub import snapshot_download
+    snapshot_download(model, local_dir=model_path)
+    print(f"✅ Model downloaded to {model_path}")
+
 torchaudio.set_audio_backend("soundfile")
 
 
